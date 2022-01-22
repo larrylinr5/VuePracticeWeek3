@@ -202,7 +202,6 @@ const app = createApp({
                     //是否啟用
                     is_enabled: false
                 };
-                this.tempProduct = fakeData[0]
                 this.isNew = true;
                 productModal.show();
             }
