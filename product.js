@@ -101,14 +101,10 @@ const app = createApp({
                     alert('取得後臺產品列表失敗');
                 });
         },
-        //設定右邊產品細節
-        checkDetail(product) {
-            this.tempProduct = product;
-        },
         //在暫存產品物件內建立 imagesUrl多圖陣列
         createImages() {
-            this.tempProduct.imagesUrl = ['https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2832&q=80'];
-            //this.tempProduct.imagesUrl.push('');
+            this.tempProduct.imagesUrl = [];
+            this.tempProduct.imagesUrl.push('');
         },
         //新增產品
         createProduct() {
@@ -206,6 +202,7 @@ const app = createApp({
                     //是否啟用
                     is_enabled: false
                 };
+                this.tempProduct = fakeData[0]
                 this.isNew = true;
                 productModal.show();
             }
