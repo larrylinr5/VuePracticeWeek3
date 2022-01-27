@@ -5,7 +5,7 @@ import { createApp } from "https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.26/vue
 let productModal = ''
 /** 刪除提示的Modal */
 let delProductModal = ''
-/** 假資料 */
+/** 假資料 用不到但方便測試時建假資料用 */
 const fakeData = [
     {
         category: "甜甜圈",
@@ -74,6 +74,14 @@ const app = createApp({
     methods: {
         //檢查是否為管理者
         checkAdmin() {
+            //存放token 只需要設定一次
+            const tempToken = document.cookie.replace(
+                /(?:(?:^|.*;\s*)larryToken\s*\=\s*([^;]*).*$)|^.*$/,
+                "$1"
+            );
+            //axios預設headers
+            axios.defaults.headers.common["Authorization"] = tempToken;
+
             axios
                 .post(`${this.url}/api/user/check`)
                 // 成功的結果
@@ -108,21 +116,17 @@ const app = createApp({
         },
         //新增產品
         createProduct() {
-            console.log()
             axios['post'](`${this.url}/api/${this.path}/admin/product`, { data: this.tempProduct })
                 // 成功的結果
                 .then((response) => {
-                    //若成功新增
-                    if (response.data.success) {
-                        //彈出成功新增訊息
-                        alert('新增成功');
-                        //關閉Modal
-                        productModal.hide();
-                        //重新抓畫面的List
-                        this.getProducts();
-                        //清除tempProduct
-                        this.RemoveTempProduct()
-                    }
+                    //彈出成功新增訊息
+                    alert('新增成功');
+                    //關閉Modal
+                    productModal.hide();
+                    //重新抓畫面的List
+                    this.getProducts();
+                    //清除tempProduct
+                    this.tempProduct = {}
                 })
                 // 失敗的結果
                 .catch((err) => {
@@ -143,7 +147,7 @@ const app = createApp({
                         //重新抓畫面的List
                         this.getProducts();
                         //清除tempProduct
-                        this.RemoveTempProduct()
+                        this.tempProduct = {}
                     }
                 })
                 // 失敗的結果
@@ -165,7 +169,7 @@ const app = createApp({
                         //重新抓畫面的List
                         this.getProducts();
                         //清除tempProduct
-                        this.RemoveTempProduct()
+                        this.tempProduct = {}
                     }
 
                 })
@@ -175,33 +179,10 @@ const app = createApp({
                 })
 
         },
-        //清空暫存的產品
-        RemoveTempProduct() {
-            this.tempProduct = {}
-        },
         //開啟Modal
         openModal(isNew, item) {
             //新增
             if (isNew === 'new') {
-                this.tempProduct = {
-                    imagesUrl: [],
-                    //標題
-                    title: '',
-                    //分類
-                    category: '',
-                    //單位
-                    unit: '',
-                    //
-                    origin_price: '',
-                    //售價
-                    price: '',
-                    //產品描述
-                    description: '',
-                    //說明內容
-                    content: '',
-                    //是否啟用
-                    is_enabled: false
-                };
                 this.isNew = true;
                 productModal.show();
             }
@@ -220,14 +201,7 @@ const app = createApp({
         },
     },
     created() {
-        //存放token 只需要設定一次
-        const tempToken = document.cookie.replace(
-            /(?:(?:^|.*;\s*)larryToken\s*\=\s*([^;]*).*$)|^.*$/,
-            "$1"
-        );
-        //axios預設headers
-        axios.defaults.headers.common["Authorization"] = tempToken;
-
+        //檢核是否為管理者身分
         this.checkAdmin()
     },
     mounted() {
